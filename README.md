@@ -1,41 +1,45 @@
 # Gavin Berger Senior Project - CSCI 4960
 
-## QuantConnect Algorithmic Trading Senior Project
+## Designing and Testing Quantitative Trading Algorithms in QuantConnect Using SPY
 
-This repository contains my senior project for **CSCI 4960** at the University of North Georgia. The project focuses on designing, testing, and comparing quantitative trading algorithms using **QuantConnect** and Python.
+This repository contains my senior project for **CSCI 4960** at the University of North Georgia. The project focuses on designing, backtesting, and evaluating quantitative trading algorithms using **QuantConnect**, **Python**, and **SPY**, the SPDR S&P 500 ETF Trust.
 
-The goal of this project was to explore how rule-based trading strategies can be developed, backtested, and evaluated using historical market data. Each algorithm uses a different trading approach and risk management style to test how technical indicators can guide automated trading decisions.
+The purpose of this project was to explore how rule-based trading systems can be built using technical indicators, historical market data, automated execution logic, and risk management rules.
 
 ---
 
 ## Project Overview
 
-This senior project focuses on algorithmic trading with SPY, the SPDR S&P 500 ETF Trust. SPY was used because it tracks the S&P 500 and provides a strong market benchmark for testing trading strategies.
+This project compares three SPY-based quantitative trading algorithms. Each algorithm uses a different trading approach to test how signal design, timing, and risk controls affect performance.
 
-The project includes:
+The project began with a faster short-term moving average crossover strategy. After testing that baseline model, the project moved toward more selective strategies that used trend filters, pullback signals, recovery triggers, exponential moving averages, ATR-based risk management, and stop-loss protection.
 
-- Multiple QuantConnect trading algorithms
-- Python-based strategy logic
-- Backtesting results
-- Risk management rules
-- Performance comparison between strategies
-- Final presentation materials
+The final project evaluates each algorithm using backtest results and performance metrics such as:
+
+- Net profit
+- Drawdown
+- Win rate
+- Average win
+- Average loss
+- Sharpe ratio
+- Profit-loss ratio
+- Total orders
+- Trade frequency
+- Expectancy
 
 ---
 
 ## Tools and Technologies
 
-- **Python**
-- **QuantConnect**
-- **LEAN Algorithmic Trading Engine**
-- **SPY ETF historical market data**
-- **Technical indicators**
-  - Simple Moving Average
-  - Exponential Moving Average
-  - Relative Strength Index
-  - Average True Range
-- **Backtesting**
-- **GitHub**
+- Python
+- QuantConnect
+- Lean Algorithmic Trading Engine
+- SPY historical market data
+- Technical indicators
+- Backtesting
+- GitHub
+- Overleaf / LaTeX
+- PowerPoint
 
 ---
 
@@ -44,133 +48,263 @@ The project includes:
 | File | Description |
 |---|---|
 | `main.py` | Main QuantConnect algorithm file |
-| `Alert Magenta Rat.py` | Moving average crossover strategy with trend filtering and ATR-based position sizing |
-| `Creative Yellow-Green Panda.py` | Medium-speed SPY trend strategy using 15-minute bars and SMA crossovers |
-| `Fat Orange Chinchilla.py` | SPY swing trading strategy using RSI pullbacks, moving averages, ATR stops, partial profit taking, and trailing stops |
-| `Measured Violet Rhinoceros.json` | QuantConnect project/backtest data file |
-| `Muscular Brown Jellyfish.json` | QuantConnect project/backtest data file |
-| `Swimming Light Brown Sheep.json` | QuantConnect project/backtest data file |
+| `Creative Yellow-Green Panda.py` | Algorithm 1: 15-minute 9/21 SMA crossover strategy |
+| `Fat Orange Chinchilla.py` | Algorithm 2: Trend, RSI pullback, and EMA recovery strategy |
+| `Alert Magenta Rat.py` | Algorithm 3: 20/50 EMA strategy with 200 EMA trend filter |
+| `.json` files | QuantConnect project/backtest result files |
 | `QuantConnect__Gavin_Berger_Senior_ProjectPresentation.pptx` | Final project presentation |
 | `README.md` | Project documentation |
 
 ---
 
-## Algorithm 1: Moving Average Crossover Strategy
+# Algorithm 1: Creative Yellow-Green Panda
 
-This strategy uses SPY and focuses on trend-following behavior. It compares a fast moving average against a slower moving average to detect bullish and bearish crossover signals.
+## Strategy Type
 
-### Main Features
+**15-minute 9/21 SMA crossover strategy**
 
-- Trades SPY
-- Uses moving average crossover logic
-- Uses a long-term trend filter
-- Uses ATR for volatility-based position sizing
-- Includes stop-loss risk management
-- Checks signals near market close
+## Description
 
-### Strategy Logic
+Creative Yellow-Green Panda was the first major strategy developed for the project. It was designed as a medium-speed SPY trading model that uses short-term moving average crossover signals on 15-minute price bars.
 
-The algorithm enters a long position when the fast moving average crosses above the slow moving average while the price is also above the long-term trend moving average. It exits when the fast moving average crosses below the slow moving average or when the stop-loss condition is triggered.
+Instead of using daily candles, the strategy consolidates minute data into 15-minute bars. This allows the algorithm to react faster to short-term market movement while still avoiding extremely high-frequency trading.
 
----
+## Indicators Used
 
-## Algorithm 2: Medium-Speed SPY Trend Strategy
+- 9-period Simple Moving Average
+- 21-period Simple Moving Average
+- 15-minute consolidated SPY bars
 
-This strategy uses 15-minute bars to create a faster trend-following system. Instead of using daily data only, it consolidates minute data into 15-minute candles and uses short-term SMA crossovers.
+## Trading Logic
 
-### Main Features
+The algorithm enters a long position when the 9-period SMA crosses above the 21-period SMA. It exits when the 9-period SMA crosses below the 21-period SMA.
 
-- Trades SPY
-- Uses 15-minute consolidated bars
-- Uses a 9-period Simple Moving Average
-- Uses a 21-period Simple Moving Average
-- Includes stop-loss and take-profit rules
-- Uses a cooldown period to prevent overtrading
+The strategy also includes stop-loss, take-profit, cooldown, and allocation rules to manage risk.
 
-### Strategy Logic
+## Risk Management
 
-The algorithm buys SPY when the fast SMA crosses above the slow SMA. It exits when the fast SMA crosses below the slow SMA, when the stop-loss is reached, or when the take-profit target is reached.
+- 1% stop loss
+- 2% take profit target
+- 60-minute cooldown after exits
+- Maximum allocation of 95%
+- Long-only trading
 
----
+## Backtest Results
 
-## Algorithm 3: SPY Swing Trading Strategy
+| Metric | Result |
+|---|---:|
+| Starting Equity | $100,000.00 |
+| Ending Equity | $120,771.07 |
+| Net Profit | 20.77% |
+| Maximum Drawdown | 9.20% |
+| Total Orders | 889 |
+| Win Rate | 41% |
+| Profit-Loss Ratio | 1.72 |
+| Sharpe Ratio | -0.081 |
+| Trade Frequency | 298.88 trades per year |
 
-This strategy uses daily data and combines multiple technical indicators to identify pullback opportunities during longer-term uptrends.
+## Summary
 
-### Main Features
-
-- Trades SPY
-- Uses daily market data
-- Uses 50-day SMA and 200-day SMA trend filters
-- Uses RSI to detect oversold pullbacks
-- Uses 20-day EMA as a recovery trigger
-- Uses ATR-based stop losses
-- Includes partial profit taking
-- Includes trailing stop logic
-- Includes maximum holding period and cooldown rules
-
-### Strategy Logic
-
-The algorithm looks for SPY to be in an uptrend based on the 50-day SMA being above the 200-day SMA. It then waits for RSI to become oversold and only enters after the price recovers above the 20-day EMA. The strategy manages risk using ATR-based stops, partial profit taking, and trailing stops.
+Algorithm 1 produced a positive return, but it placed a high number of trades. This showed that the strategy was profitable, but also exposed to short-term market noise. The negative Sharpe ratio suggested that the risk-adjusted performance still needed improvement.
 
 ---
 
-## Backtesting
+# Algorithm 2: Fat Orange Chinchilla
 
-Each strategy was tested using QuantConnect’s backtesting environment. The backtests helped evaluate how each algorithm performed under historical market conditions.
+## Strategy Type
 
-Important performance metrics reviewed included:
+**Long-only SPY swing trading strategy using trend, pullback, and recovery signals**
 
-- Total return
-- Net profit
-- Drawdown
-- Win rate
-- Sharpe ratio
-- Sortino ratio
-- Number of trades
-- Profit-loss ratio
-- Portfolio turnover
+## Description
+
+Fat Orange Chinchilla was designed to be more selective than Algorithm 1. Instead of entering trades based only on a crossover, this strategy requires multiple conditions before entering a position.
+
+The strategy uses a broader trend filter, an RSI pullback signal, and an EMA recovery trigger. This makes it a more complete swing trading system.
+
+## Indicators Used
+
+- 50-day Simple Moving Average
+- 200-day Simple Moving Average
+- Relative Strength Index
+- 20-day Exponential Moving Average
+- Average True Range
+
+## Trading Logic
+
+The algorithm first checks whether SPY is in a broader uptrend using the 50-day SMA and 200-day SMA. If the 50-day SMA is above the 200-day SMA, the market is treated as being in an uptrend.
+
+The algorithm then looks for an RSI oversold condition to identify a pullback. After the pullback, the strategy waits for price to recover above the 20-day EMA before entering a trade.
+
+## Risk Management
+
+- ATR-based stop loss
+- Partial profit taking at 5% gain
+- Trailing stop after partial profit
+- Maximum 20-day holding period
+- 3-day cooldown after exits
+- Long-only trading
+
+## Backtest Results
+
+| Metric | Result |
+|---|---:|
+| Starting Equity | $100,000.00 |
+| Ending Equity | $104,926.22 |
+| Net Profit | 4.93% |
+| Compounding Annual Return | 1.454% |
+| Maximum Drawdown | 11.40% |
+| Total Orders | 10 |
+| Win Rate | 83% |
+| Loss Rate | 17% |
+| Average Win | 2.77% |
+| Average Loss | -8.46% |
+| Profit-Loss Ratio | 0.33 |
+| Expectancy | 0.106 |
+| Sharpe Ratio | -1.084 |
+| Sortino Ratio | -0.228 |
+| Total Fees | $10.13 |
+
+## Summary
+
+Algorithm 2 had the highest win rate, but the average loss was much larger than the average win. This showed that win rate alone is not enough to judge a trading strategy. Even though the strategy was profitable, its drawdown and risk-adjusted performance were weaker than expected.
 
 ---
 
-## What I Learned
+# Algorithm 3: Alert Magenta Rat
 
-Through this project, I learned how quantitative trading systems are built, tested, and improved. I also gained experience working with financial data, technical indicators, automated trading logic, and performance metrics.
+## Strategy Type
 
-This project helped connect computer science concepts with finance by applying:
+**Daily 20/50 EMA strategy with 200 EMA trend filter**
 
-- Automation
-- Data analysis
-- Object-oriented programming
-- Algorithm design
-- Risk management
-- Testing and evaluation
+## Description
+
+Alert Magenta Rat was the strongest overall strategy in the project. It was designed to create a more balanced SPY trading system by using exponential moving averages and a long-term trend filter.
+
+This strategy uses a daily 20/50 EMA signal structure with a 200 EMA trend filter. It also includes ATR-based position sizing and intraday stop-loss monitoring.
+
+## Indicators Used
+
+- 20-day Exponential Moving Average
+- 50-day Exponential Moving Average
+- 200-day Exponential Moving Average
+- Average True Range
+- Minute data for intraday risk monitoring
+
+## Trading Logic
+
+The algorithm enters a long position when the 20 EMA crosses above the 50 EMA while SPY is also above the 200 EMA. This confirms both short-term momentum and broader trend strength.
+
+The algorithm exits when the 20 EMA crosses below the 50 EMA or when the stop-loss condition is triggered.
+
+## Risk Management
+
+- 5% stop loss
+- ATR-based volatility-adjusted position sizing
+- Daily signal check near market close
+- Intraday stop-loss monitoring using minute data
+- Long-only trading
+- 200 EMA trend filter to avoid weaker market conditions
+
+## Backtest Results
+
+| Metric | Result |
+|---|---:|
+| Starting Equity | $100,000.00 |
+| Ending Equity | $131,593.01 |
+| Net Profit | 31.593% |
+| Compounding Annual Return | 6.545% |
+| Drawdown | 7.60% |
+| Total Orders | 13 |
+| Win Rate | 67% |
+| Loss Rate | 33% |
+| Average Win | 8.31% |
+| Average Loss | -2.45% |
+| Profit-Loss Ratio | 3.39 |
+| Expectancy | 1.927 |
+| Sharpe Ratio | 0.011 |
+| Sortino Ratio | 0.010 |
+| Total Fees | $13.00 |
+
+## Summary
+
+Algorithm 3 produced the best overall results. It had the highest net profit, the lowest drawdown, and the strongest profit-loss ratio. It was also much more selective than Algorithm 1, placing only 13 orders while still outperforming the other strategies.
 
 ---
 
-## Future Improvements
+# Algorithm Comparison
 
-Possible improvements for this project include:
-
-- Testing the algorithms on more assets besides SPY
-- Adding benchmark comparisons
-- Improving position sizing logic
-- Testing different market conditions
-- Adding machine learning or statistical models
-- Building a dashboard to compare strategy performance
-- Improving file organization for each algorithm and result set
+| Metric | Algorithm 1 | Algorithm 2 | Algorithm 3 |
+|---|---:|---:|---:|
+| Strategy Name | Creative Yellow-Green Panda | Fat Orange Chinchilla | Alert Magenta Rat |
+| Strategy Type | 15-minute 9/21 SMA crossover | Trend, RSI pullback, EMA recovery | 20/50 EMA with 200 EMA filter |
+| Main Asset | SPY | SPY | SPY |
+| Trade Style | Medium-speed long-only | Swing trading long-only | Trend-following long-only |
+| Trade Count | 889 orders | 10 orders | 13 orders |
+| Win Rate | 41% | 83% | 67% |
+| Average Win | Not provided | 2.77% | 8.31% |
+| Average Loss | Not provided | -8.46% | -2.45% |
+| Max Drawdown | 9.20% | 11.40% | 7.60% |
+| Net Profit | 20.77% | 4.93% | 31.593% |
+| Sharpe Ratio | -0.081 | -1.084 | 0.011 |
+| Profit-Loss Ratio | 1.72 | 0.33 | 3.39 |
 
 ---
 
-## Disclaimer
+# Key Findings
 
-This project was created for educational purposes only. The algorithms in this repository are not financial advice and should not be used for live trading without further testing, validation, and risk review.
+The project showed that a profitable trading algorithm is not always the strongest strategy. Each algorithm had different strengths and weaknesses.
+
+Algorithm 1 produced a solid return, but it traded too frequently and had weak risk-adjusted performance.
+
+Algorithm 2 had the highest win rate, but its average loss was much larger than its average win. This made the strategy less reliable even though it was profitable.
+
+Algorithm 3 had the best balance of return, drawdown control, trade quality, and selectivity. It produced the highest net profit while placing far fewer trades than Algorithm 1.
 
 ---
 
-## Author
+# What I Learned
+
+This project helped me better understand how computer science can be applied to financial technology. I learned how to design trading algorithms, work with historical market data, evaluate backtest results, and debug strategy logic.
+
+The project also showed that algorithmic trading is not only about writing code that buys and sells assets. A strong strategy must also manage risk, control losses, avoid misleading backtest results, and be evaluated using multiple performance metrics.
+
+Important lessons from the project include:
+
+- Total profit does not tell the full story
+- Win rate can be misleading
+- Drawdown is important for understanding risk
+- Small implementation issues can change backtest results
+- Risk management is just as important as entry logic
+- A strategy needs enough trades to judge reliability
+- Backtesting is useful, but results must be interpreted carefully
+
+---
+
+# Future Improvements
+
+Possible future improvements include:
+
+- Testing the strategies on more assets besides SPY
+- Comparing each strategy directly against buy-and-hold SPY
+- Improving stop-loss and position sizing logic
+- Testing the strategies in bull, bear, and sideways markets
+- Running longer live paper trading tests
+- Building a dashboard to compare backtest results
+- Adding stronger benchmark analysis
+- Collecting more trades to improve reliability
+
+---
+
+# Disclaimer
+
+This project was created for educational purposes only. The algorithms in this repository are not financial advice and should not be used for live trading without additional testing, validation, and risk review.
+
+---
+
+# Author
 
 **Gavin Berger**  
 Computer Science Student  
 University of North Georgia  
-CSCI 4960 Senior Project
+CSCI 4960 Senior Project  
+May 2026
